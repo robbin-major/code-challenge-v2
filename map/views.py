@@ -3,8 +3,8 @@ import os
 from django.shortcuts import render
 from django.views.generic import TemplateView
 
-from rest_framework.views import APIView
 from rest_framework.response import Response
+from rest_framework.views import APIView
 
 from map.models import CommunityArea
 from map.serializers import CommunityAreaSerializer
@@ -16,11 +16,12 @@ class Home(TemplateView):
 
 class MapDataView(APIView):
     def get(self, request):
-        community_areas = CommunityArea.objects.all()
+        areas = CommunityArea.objects.all()
+
         serializer = CommunityAreaSerializer(
-            community_areas,
+            areas,
             many=True,
-            context={"year": request.query_params.get("year")},
+            context={"request": request},
         )
         return Response(serializer.data)
 

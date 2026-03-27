@@ -3,16 +3,10 @@
 {% block title %}Home{% endblock %}
 
 {% block body %}
-  <div class="container-fluid">
-    <div class="row">
-      <div class="col-sm-10 offset-sm-1">
-        <div id="map"></div>
-      </div>
-    </div>
-  </div>
+<div id="map"></div>
 {% endblock %}
 
 {% block extra_js %}
-  {% load render_bundle from webpack_loader %}
-  {% render_bundle 'app' js %}
+{% load render_bundle from webpack_loader %}
+{% render_bundle 'app' 'js' %}
 {% endblock %}

@@ -155,7 +155,10 @@ LOCALE_PATHS = (os.path.join(BASE_DIR, "locale"),)
 
 STATIC_URL = "/static/"
 STATIC_ROOT = "/static"
-STATICFILES_DIRS = (os.path.join(BASE_DIR, "assets"),)
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, "map", "static"),
+    os.path.join(BASE_DIR, "assets"),
+]
 STATICFILES_STORAGE = os.getenv(
     "DJANGO_STATICFILES_STORAGE",
     "whitenoise.storage.CompressedManifestStaticFilesStorage",
@@ -166,11 +169,10 @@ STATICFILES_FINDERS = (
 )
 
 WEBPACK_LOADER = {
-    "DEFAULT": {
-        "CACHE": not DEBUG,
-        "STATS_FILE": os.path.join(BASE_DIR, "webpack-stats.json"),
-        "POLL_INTERVAL": not DEBUG,
-        "IGNORE": [r".+\.hot-update.js", r".+\.map"],
+    'DEFAULT': {
+        'CACHE': True,
+        'BUNDLE_DIR_NAME': 'bundles/',
+        'STATS_FILE': os.path.join(BASE_DIR, 'webpack-stats.json'),
     }
 }
 

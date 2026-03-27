@@ -3,6 +3,11 @@ Add styles unrelated to Bootstrap here. Customizing Bootstrap?
 Make your changes to the Sass file.
 */
 
+#map {
+  height: 100vh;
+}
+
 #restaurant-map {
-  height: 800px;
+  height: 600px;
+  width: 100%;
 }

@@ -24,7 +24,7 @@ const config = {
     host: "0.0.0.0",
     port: 3000,
     compress: false,
-    allowedHosts: ["localhost"],
+    allowedHosts: ["all"],
   },
   watchOptions: {
     poll: 1000,
@@ -108,9 +108,11 @@ module.exports = (env, argv) => {
    * serves our bundles. In production, Django should look in
    * /app/static/bundles for bundles.
    */
-  if (argv.mode === "development") {
-    config.output.publicPath = "http://localhost:3000/static/bundles/"
-  }
+if (argv.mode === "development") {
+  config.devServer.allowedHosts = "all"
+  config.output.publicPath =
+    "https://legendary-dollop-vjp6v75wprx2xjr6-3000.app.github.dev/static/bundles/"
+}
 
   if (argv.mode === "production") {
     config.output.publicPath = "/static/bundles/"

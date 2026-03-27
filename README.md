@@ -1,92 +1,137 @@
-# DataMade Code Challenge: React Map
+💬 Final Thoughts
 
-![2026 DataMade Code Challenge](https://github.com/datamade/code-challenge-v2/blob/main/map/static/images/2026-datamade-code-challenge.jpg)
+One thing I also learned during this project is that I don’t always need a powerful local setup to build and debug applications.
 
-Welcome to the 2026 DataMade code challenge! 👋
+In the past, I thought I needed to install everything (like Docker) directly on my computer. But because of storage limitations and my experience from coding bootcamp, I realized I could use cloud-based environments like GitHub Codespaces instead. That made it possible for me to fully run and complete this project without being blocked by my machine.
 
-## Overview
+That was honestly empowering.
 
-Your task is to complete the following programming exercise to show us some of your code! This exercise is based on work that DataMade does every day: pulling data from the web, debugging tricky code, and presenting information to the world.
+This project also reminded me that even though I don’t identify as a traditional coder, I am a developer. I’ve built products, I solve problems, and I find ways to bring ideas to life. Tools like AI helped me bridge gaps in syntax while still requiring me to think critically, debug, and understand what was happening.
 
-Submissions should be submitted as a pull request against your fork of this original repository. **Make sure to make your pull request against your own fork of the repository, not the original DataMade repository**.
+I really appreciated that this challenge openly allowed the use of AI. It didn’t make the work easier, it made it more accessible, and it encouraged real problem-solving instead of memorization.
 
-There’s no time limit, but don’t feel the need to go over the top with your submission. We expect this task to take about two hours to complete, but it could take more or less time depending on your familiarity with Django and React. When you’re all set, share your code with us as a repository on GitHub.
+Working through this has inspired me to continue building my own app and explore how I can use AI tools to automate parts of my workflow, especially around event data. It made me realize that even without a big budget, I can still make progress by combining my ideas with the tools available to me.
 
-We’ll be evaluating whether the code works, as well as its quality. Before submitting, make sure that your code does what you expect it to do, that it’s clean and neat enough to meet your standards, and that you’ve provided us some instructions on how to run it.
+It would truly be an honor to work for a company that sees everyone as a developer and is focused on building things that have a positive impact.
 
-## Installation
 
-Development requires a local installation of [Docker](https://docs.docker.com/get-started/get-docker/) and [Docker Compose](https://docs.docker.com/compose/install/). These are the only two system-level dependencies you should need.
+📍 2026 DataMade Code Challenge
+🧠 Overview
 
-Once you have Docker and Docker Compose installed, build the application containers from the project's root directory:
+This project visualizes restaurant permits across Chicago community areas using an interactive map. Users can filter by year, and each area is colored based on the number of permits issued.
 
-```bash
-docker compose build
-```
+🚀 How to Run the Project
 
-Load in the data:
+Start the app
+docker compose up --build
 
-```bash
-docker compose run --rm app python manage.py loaddata map/fixtures/restaurant_permits.json map/fixtures/community_areas.json
-```
+Restart if needed
+docker compose restart app
 
-And finally, run the app:
+Rebuild if things break
+docker compose down
+docker compose up --build
 
-```bash
-docker compose up
-```
+Build frontend manually
+npm run build
 
-The app will log to the console, and you should be able to visit it at http://localhost:8000
+⚠️ Important Ports Lesson (BIG ONE)
 
-## Completing the Challenge
+At one point, I kept switching everything to port 3000, but the app actually runs on:
 
-Once you have the app up and running on your computer, you'll need to flesh out certain code blocks to make the map functional. You'll be using [Django](https://docs.djangoproject.com/en/6.0/) and [React-Leaflet](https://react-leaflet.js.org/docs/api-components/) to complete this task. By the end of this challenge, you should have:
+http://localhost:8000
 
-- a map that displays Chicago's community areas, shaded depending on how many new restaurant permits were issued in a given year
-- community area shapes that show some light details on that community area when a user interacts with them
-- a filter that allows users to request permits that were issued in a given year
-- UI components that display the total number of permits and max number of permits in one community area for that year
+👉 This caused confusion because:
 
-This way you go about completing these goals is meant to be open-ended, so tackle the following steps in whatever way you're most comfortable!
+frontend and backend were mismatched
+requests were failing silently
 
-### Step 1: Supplement the community area geojson data
+Fix: Always confirm the correct port before debugging anything else.
 
-In `map/serializers.py`, supplement each community area with data on the amount of permits issued in each area during the currently filtered year. From here, the view will pass that data to the front end.
+🗺️ Key Features Implemented
 
-### Step 2: Write a test for your data endpoint
+Year filter dropdown
+GeoJSON map of Chicago community areas
+Hover interaction with permit counts
+Dynamic color scaling based on permit density
+Data fetched from backend endpoint
 
-In `tests/test_views.py` implement a test to validate the data that your endpoint produces. You will want to create some test `CommunityArea` and `RestaurantPermit` objects and then assert that the expected values are returned when querying the endpoint.
+🧩 Key Problems I Solved
 
-Use this command to run tests:
+1. ❌ return outside function
+Cause: extra } closed the function too early
+Fix: removed stray bracket so return stayed inside component
 
-```bash
- docker compose -f docker-compose.yml -f tests/docker-compose.yml run --rm app
-```
+2. ❌ layer is not defined
+Cause: using layer outside setAreaInteraction
+Fix: moved all layer logic inside the function
 
-### Step 3: Filter results by a specific year
+3. ❌ All permits showing 0
+Cause: data hadn’t loaded yet when map rendered
+Fix:
+key={`${year}-${currentYearData.length}`}
 
-In `map/static/js/RestaurantPermitMap.js`, create a filter that allows users to send a request for a specific year to the backend. The options shoulds be any year between 2016 and 2026, inclusive. Then, use the fetch api in the map component to make a request and receive that data.
+This forces React to re-render GeoJSON after data loads
 
-### Step 4: Display results on the page
+4. ❌ Data matching failed
+Fix:
+(area) =>
+  area.name?.trim().toUpperCase() ===
+  feature.properties.community?.trim().toUpperCase()
 
-In the map component, process the community area and use it to display shapes for all areas on the map. Then, display the total number of restaurant permits that year as well as the maximum number of permits in any one area.
+5. ❌ OpenStreetMap “Access blocked”
+Cause: tile server rejecting requests
+Fix:
+url="https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png"
 
-### Step 5: Make the map dynamic
 
-Start displaying some data! Use the `setAreaInteraction()` method to shade the map according to how many permits it has in a year, making sure that it updates automatically when a new year is selected. In this same method, have each area display a popup during some kind of user interaction. The popup should have some light details to help the user understand what they're looking at.
+🧠 My Process (Important)
 
-### Step 6: Submit your work
+This did NOT take 2 hours.
 
-To submit your work, create a feature branch for your code, commit your changes, push your commits up to your fork, and open up a pull request against main. Finally, drop a link to your pull request in your application.
+It took closer to:
 
-_Note: If you would prefer to keep your code challenge private, please share access with the following members of DataMade on GitHub:_
+~16–24 hours total
+including debugging, breaks, and real life
 
-| Member    | GitHub Account                   |
-| --------- | -------------------------------- |
-| Hannah    | https://github.com/hancush       |
-| Derek     | https://github.com/derekeder     |
-| Monkruman | https://github.com/antidipyramid |
-| Xavier    | https://github.com/xmedr         |
-| Hayley    | https://github.com/haowens       |
+What helped me:
 
-Keep in mind that you cannot create a private fork of a public repository on GitHub, so you’ll need to [follow these instructions](https://gist.github.com/0xjac/85097472043b697ab57ba1b1c7530274) to create a private copy of the repo.
+Taking screenshots of errors
+Logging data (console.log)
+Fixing ONE problem at a time
+Not guessing — actually checking what data looked like
+
+
+🤝 How I Used AI
+
+I did not copy full solutions.
+
+Instead:
+
+I described what I was seeing
+I shared screenshots
+I was guided to:
+check variables
+inspect data
+move code into correct scope
+
+This helped me actually understand:
+
+React state timing
+GeoJSON rendering behavior
+debugging strategies
+
+
+🧠 Key Takeaways
+
+Data timing matters (React renders before fetch completes)
+Scope matters (layer only exists inside its function)
+Logs are your best friend
+Matching strings is trickier than it looks
+Don’t assume, INSPECT!
+
+
+
+
+This project was challenging but rewarding. The hardest part wasn’t writing code, it was debugging and understanding how everything connects.
+

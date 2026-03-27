@@ -39,3 +39,14 @@ def test_map_data_view():
     # TODO: Complete the test by asserting that the /map-data/ endpoint
     # returns the correct number of permits for Beverly and Lincoln 
     # Park in 2021
+    assert response.status_code == 200
+
+    data = response.json()
+
+    # Find Beverly
+    beverly = next(item for item in data if item["name"] == "Beverly")
+    assert beverly["num_permits"] == 2
+
+    # Find Lincoln Park
+    lincoln_park = next(item for item in data if item["name"] == "Lincoln Park")
+    assert lincoln_park["num_permits"] == 3
