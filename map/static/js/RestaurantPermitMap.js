@@ -3,30 +3,14 @@ import { MapContainer, TileLayer, GeoJSON } from "react-leaflet"
 import "leaflet/dist/leaflet.css"
 import RAW_COMMUNITY_AREAS from "../../../data/raw/community-areas.geojson"
 
-function YearSelect({ setYear }) {
-  const startYear = 2026
-  const years = [...Array(11).keys()].map((i) => startYear - i)
-
-  const options = years.map((year) => (
-    <option value={year} key={year}>
-      {year}
-    </option>
-  ))
-
+function YearSelect({ year, setYear }) {
   return (
-    <>
-      <label htmlFor="yearSelect" className="fs-3">
-        Filter by year:{" "}
-      </label>
-      <select
-        id="yearSelect"
-        className="form-select form-select-lg mb-3"
-        onChange={(e) => setYear(Number(e.target.value))}
-        defaultValue={2026}
-      >
-        {options}
-      </select>
-    </>
+    <select value={year} onChange={(e) => setYear(Number(e.target.value))}>
+      <option value={2026}>2026</option>
+      <option value={2025}>2025</option>
+      <option value={2024}>2024</option>
+      <option value={2023}>2023</option>
+    </select>
   )
 }
 
@@ -40,11 +24,13 @@ export default function RestaurantPermitMap() {
 
   const yearlyDataEndpoint = `/map-data/?year=${year}`
 
+
+
   useEffect(() => {
   fetch(yearlyDataEndpoint)
     .then((res) => res.json())
     .then((data) => {
-      console.log("fetched data:", data)
+      
       setCurrentYearData(data)
     })
 }, [yearlyDataEndpoint])
@@ -89,7 +75,7 @@ function setAreaInteraction(feature, layer) {
     layer.openPopup()
   })
 
-  // ✅ MOVE THIS UP INTO THE FUNCTION
+  
   layer.setStyle({
     fillColor: getColor(percentageOfPermits),
     fillOpacity: 0.7,
@@ -97,11 +83,11 @@ function setAreaInteraction(feature, layer) {
     weight: 1,
   })
 }
-
+   
 
  return (
   <>
-    <YearSelect setFilterVal={setYear} />
+    <YearSelect year={year} setYear={setYear} />
 
     <MapContainer
       center={[41.8781, -87.6298]}
@@ -115,10 +101,11 @@ function setAreaInteraction(feature, layer) {
       />
 
       <GeoJSON
-        key={`${year}-${currentYearData.length}`}
+        key={year}
         data={RAW_COMMUNITY_AREAS}
         onEachFeature={setAreaInteraction}
 />
+
     </MapContainer>
   </>
 )
